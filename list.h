@@ -10,7 +10,8 @@ typedef struct node_t {
 	struct node_t* last;
 	int id;
 	unsigned long hash;
-	int key;
+	int key_int;
+	char* key_char;
 }node_t;
 
 typedef struct LinkedList {
@@ -20,9 +21,9 @@ typedef struct LinkedList {
 }LinkedList;
 
 LinkedList* newLinkedList();
-void LinkedList_add(LinkedList* list, int index, void* data, unsigned long hash, int key);
-void LinkedList_add_beg(LinkedList* list, void* data, unsigned long hash, int key);
-void LinkedList_add_end(LinkedList* list, void* data, unsigned long hash, int key);
+void LinkedList_add(LinkedList* list, int index, void* data, unsigned long hash, void* key, short type);
+void LinkedList_add_beg(LinkedList* list, void* data, unsigned long hash, void* key, short type);
+void LinkedList_add_end(LinkedList* list, void* data, unsigned long hash, void* key, short type);
 int LinkedList_size(LinkedList* list);
 void* LinkedList_getItem(LinkedList* list, int index);
 void LinkedList_clear(LinkedList* list);
@@ -32,6 +33,6 @@ int LinkedList_getItemId(LinkedList* list, int index);
 void LinkedList_setItemId(LinkedList* list, int index, int id);
 void* LinkedList_getLast(LinkedList* list);
 void* LinkedList_getFirst(LinkedList* list);
-node_t* LinkedList_findNodeByKey(LinkedList* list, int key);
+node_t* LinkedList_findNodeByKey(LinkedList* list, void* key, short type);
 
 #endif

@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include "list.h"
 
+
+#define HASH_MAP_INT 0
+#define HASH_MAP_STRING 1
+#define HASH_MAP_UINT 2
+
 LinkedList* newLinkedList() {
 	LinkedList* initList = malloc(sizeof(LinkedList));
 	initList->head = NULL;
@@ -9,11 +14,19 @@ LinkedList* newLinkedList() {
 	return initList;
 }
 
-void LinkedList_add(LinkedList* list, int index, void* data, unsigned long hash, int key) {
+void LinkedList_add(LinkedList* list, int index, void* data, unsigned long hash, void* key, short type) {
 	node_t* node = malloc(sizeof(node_t));
+	node->key_int = NULL;
+	node->key_char = NULL;
+
+	switch(type)
+	{
+		case HASH_MAP_INT: node->key_int = (int*) key; break;
+		case HASH_MAP_STRING: node->key_char = (char*) key; break;
+	}
+
 	node->data = data;
 	node->hash = hash;
-	node->key = key;
 	node->next = NULL;
 	node->last = NULL;
 	node->id = 0;
@@ -53,12 +66,12 @@ void LinkedList_add(LinkedList* list, int index, void* data, unsigned long hash,
 	}
 }
 
-void LinkedList_add_beg(LinkedList* list, void* data, unsigned long hash, int key) {
-	LinkedList_add(list, 0, data, hash, key);
+void LinkedList_add_beg(LinkedList* list, void* data, unsigned long hash, void* key, short type) {
+	LinkedList_add(list, 0, data, hash, key, type);
 }
 
-void LinkedList_add_end(LinkedList* list, void* data, unsigned long hash, int key) {
-	LinkedList_add(list, -1, data, hash, key);
+void LinkedList_add_end(LinkedList* list, void* data, unsigned long hash, void* key, short type) {
+	LinkedList_add(list, -1, data, hash, key, type);
 }
 
 int LinkedList_size(LinkedList* list) {
@@ -177,17 +190,40 @@ int LinkedList_getItemId(LinkedList* list, int index) {
 }
 
 
-node_t* LinkedList_findNodeByKey(LinkedList* list, int key)
+node_t* LinkedList_findNodeByKey(LinkedList* list, void* key, short type)
 {
+
 	node_t* temp = list->head;
+	int key_int = 0;
+	char* key_char = NULL;
+	
+	if (type == HASH_MAP_INT)
+	{
+		key_int = (int*) key;
+	}
+
+	else if (type == HASH_MAP_STRING)
+	{
+		key_char = (char*) key;
+	}
+	
 	while (temp != NULL)
 	{
-		int key_ = temp->key;
-		if (key_ == key)
+		if (type == HASH_MAP_INT)
+		{
+			if (key_int == temp->key_int)
 		{
 			return temp;
 		}
+		}
 
+		else if (type == HASH_MAP_STRING)
+		{
+			if (key_char == temp->key_char)
+		{
+			return temp;
+		}
+		}
 		temp = temp->next;
 	}
 	return NULL;;

@@ -2,19 +2,18 @@
 #include "hashMap.h"
 
 
+
 int main() {
-	HashMap* hashMap = newHashMap();
 
 
-    HashMap_add(34, "qw", hashMap);
-    HashMap_add(23, 435, hashMap);
+	HashMap* map = newhashMap(HASH_MAP_STRING);
 
+	HashMap_add(HASH_MAP_STRING, "qw", "hello world", map);
+	HashMap_add(HASH_MAP_STRING, "le", "lew", map);
+	HashMap_add(HASH_MAP_STRING, "rx", "qwtqtqr", map);
 
-	int val = (int*)HashMap_getItem(23, hashMap);
-
-    char* str =(char*) HashMap_getItem(34, hashMap);
-
-	printf("value: %d\n", val);
+	char* item =(char*) HashMap_getItem(HASH_MAP_STRING, "le", map);
+	printf("%s\n", item);
 
 
 	return 0;

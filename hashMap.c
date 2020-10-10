@@ -2,14 +2,27 @@
 #include "hashMap.h"
 
 
-HashMap* newHashMap()
+HashMap* newHashMap(short type)
 {
 	HashMap* map = malloc(sizeof(HashMap));
 	for (int i = 0; i < HASH_MAP_DEFAULT_SIZE; i++)
 	{
 		map->buckets[i] = newLinkedList();
+		map->size = 0;
+		map->type = type;
 	}
 	return map;
+}
+
+unsigned long hash_string(unsigned char *str)
+{
+    unsigned long hash = 5381;
+    int c;
+
+    while (c = *str++)
+        hash = ((hash << 5) + hash) + c;
+
+    return hash;
 }
 
 
@@ -27,21 +40,41 @@ int getBucket(unsigned long hash)
 	return bucketVal;
 }
 
-void HashMap_add(int key, void* data, HashMap* hashMap)
+void HashMap_add(short type, void* key, void* data, HashMap* hashMap)
 {
-	unsigned long hash = hash_int(key);
+	if(type != hashMap->type)
+	{
+		printf("Error: invalid type in 'HashMap_add()' !");
+		exit(1);
+	}
+	unsigned long hash = 0;
+	switch (type)
+	{
+		case HASH_MAP_INT:  hash = hash_int((int*) key); break;
+		case HASH_MAP_STRING: hash = hash_string((unsigned char*) key); break;
+	}
 	int bucketVal = getBucket(hash);
-	LinkedList_add_end(hashMap->buckets[bucketVal], data, hash, key);
+	LinkedList_add_end(hashMap->buckets[bucketVal], data, hash, key, type);
 }
 
 
-void* HashMap_getItem(int key, HashMap* hashMap)
+void* HashMap_getItem(short type, int key, HashMap* hashMap)
 {
-	unsigned long hash = hash_int(key);
+	if(type != hashMap->type)
+	{
+		printf("Error: invalid type in 'HashMap_getItem()' !");
+		exit(1);
+	}
+	unsigned long hash = 0;
+	switch (type)
+	{
+		case HASH_MAP_INT:  hash = hash_int((int*) key); break;
+		case HASH_MAP_STRING: hash = hash_string((unsigned char*) key); break;
+	}
 	int bucketVal = getBucket(hash);
 
 	LinkedList* bucket = hashMap->buckets[bucketVal];
 
-	node_t* node = LinkedList_findNodeByKey(bucket, key);
+	node_t* node = LinkedList_findNodeByKey(bucket, key, type);
 	return node->data;
 }
