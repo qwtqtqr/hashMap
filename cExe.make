@@ -2,7 +2,7 @@ Compiler:gcc;
 
 Type:exe;
 
-ResultName: bin/hashMapL;
+ResultName: bin/hashMap;
 
 
 Files{

@@ -1,10 +1,7 @@
 #include <stdio.h>
 #include "list.h"
-
-
 #define HASH_MAP_INT 0
 #define HASH_MAP_STRING 1
-#define HASH_MAP_UINT 2
 
 LinkedList* newLinkedList() {
 	LinkedList* initList = malloc(sizeof(LinkedList));
@@ -14,19 +11,11 @@ LinkedList* newLinkedList() {
 	return initList;
 }
 
-void LinkedList_add(LinkedList* list, int index, void* data, unsigned long hash, void* key, short type) {
+void LinkedList_add(LinkedList* list, int index, void* data, unsigned long hash, void* key) {
 	node_t* node = malloc(sizeof(node_t));
-	node->key_int = NULL;
-	node->key_char = NULL;
-
-	switch(type)
-	{
-		case HASH_MAP_INT: node->key_int = (int*) key; break;
-		case HASH_MAP_STRING: node->key_char = (char*) key; break;
-	}
-
 	node->data = data;
 	node->hash = hash;
+	node->key = key;
 	node->next = NULL;
 	node->last = NULL;
 	node->id = 0;
@@ -66,12 +55,12 @@ void LinkedList_add(LinkedList* list, int index, void* data, unsigned long hash,
 	}
 }
 
-void LinkedList_add_beg(LinkedList* list, void* data, unsigned long hash, void* key, short type) {
-	LinkedList_add(list, 0, data, hash, key, type);
+void LinkedList_add_beg(LinkedList* list, void* data, unsigned long hash, void* key) {
+	LinkedList_add(list, 0, data, hash, key);
 }
 
-void LinkedList_add_end(LinkedList* list, void* data, unsigned long hash, void* key, short type) {
-	LinkedList_add(list, -1, data, hash, key, type);
+void LinkedList_add_end(LinkedList* list, void* data, unsigned long hash, void* key) {
+	LinkedList_add(list, -1, data, hash, key);
 }
 
 int LinkedList_size(LinkedList* list) {
@@ -190,43 +179,37 @@ int LinkedList_getItemId(LinkedList* list, int index) {
 }
 
 
-node_t* LinkedList_findNodeByKey(LinkedList* list, void* key, short type)
+node_t* LinkedList_findNodeByKey(LinkedList* list, void* key, int type)
 {
-
-	node_t* temp = list->head;
-	int key_int = 0;
-	char* key_char = NULL;
-	
 	if (type == HASH_MAP_INT)
 	{
-		key_int = (int*) key;
-	}
+		int key_int = (int*)key;
+		node_t* temp = list->head;
+		while (temp != NULL)
+		{
+			int key_ =(int*) temp->key;
+			if (key_ == key)
+			{
+				return temp;
+			}
 
+			temp = temp->next;
+		}
+	}
 	else if (type == HASH_MAP_STRING)
 	{
-		key_char = (char*) key;
+		char* key_string = (char*)key;
+		node_t* temp = list->head;
+		while(temp != NULL)
+		{
+			char* key_ = (char*)temp->key;
+			if (strcmp(key_string, key_) == 0)
+			{
+				return temp;
+			}
+		}
 	}
-	
-	while (temp != NULL)
-	{
-		if (type == HASH_MAP_INT)
-		{
-			if (key_int == temp->key_int)
-		{
-			return temp;
-		}
-		}
-
-		else if (type == HASH_MAP_STRING)
-		{
-			if (key_char == temp->key_char)
-		{
-			return temp;
-		}
-		}
-		temp = temp->next;
-	}
-	return NULL;;
+	return NULL;
 }
 
 void LinkedList_setItemId(LinkedList* list, int index, int id) {
